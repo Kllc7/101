@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVYS</title>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.53/build/spline-viewer.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        .text-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #text1 {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            font-size: clamp(1.8rem, 6vw, 3.5rem);
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(48, 53, 0, 0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            pointer-events: auto;
+        }
+
+        #sub {
+            font-size: clamp(2rem, 2.4vw, 1rem);
+            font-weight: 10;
+            padding: 10px 0px;
+            text-shadow: 0 2px 4px rgba(48, 53, 0, 0.1);
+            opacity: 0.5;
+        }
+
+        #text1.text-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .side-content {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 100vh;
+            overflow-y: scroll;
+            pointer-events: none;
+            padding-right: 20px;
+        }
+
+        .content-block {
+            margin-bottom: 30px;
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
+
+        .content-block.content-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .feature-list {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease;
+            margin-top: 10px;
+        }
+
+        .content-block:hover .feature-list {
+            max-height: 500px;
+        }
+
+        .feature-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .animated-text {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .content-paragraph {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(0, 123, 255, 0.9);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        .action-button:hover {
+            background: rgba(0, 123, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .scroll-instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .scroll-instructions.fade-out {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+
+        @media screen and (max-width: 768px) {
+            .side-content {
+                right: 10px;
+                width: calc(100% - 20px);
+                padding-right: 10px;
+            }
+            
+            #text1 {
+                left: 20px;
+                top: 20px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            #text1 {
+                left: 10px;
+                top: 10px;
+                padding: 15px 20px;
+            }
+            
+            .content-block {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene-container">
+        <spline-viewer url="https://prod.spline.design/05X7vr-A3GYevwIX/scene.splinecode"></spline-viewer>
+        <div class="text-container">
+            <div class="animated-text" id="text1">Marketing Made Easy.
+                <p id="sub">Every great idea starts with a stroke of genius. DATAI turns your vision into campaigns faster than ever—without the guesswork.</p>
+            </div>
+            <div class="side-content">
+                <div class="content-block" id="block1">
+                    <div class="animated-text">See What Others Miss.</div>
+                    <p class="content-paragraph">DATAI analyzes your data to uncover what matters most. Find out what content resonates with your audience, identify engagement trends, and adapt in real time to stay ahead.</p>
+                    <div class="feature-list">
+                        <div class="feature-item">Know Before You Act: Analyze past performance trends to predict campaign success rates with precision.</div>
+                        <div class="feature-item">Find Your True Audience: Discover your ideal customers and how to reach them.</div>
+                        <div class="feature-item">Grow Faster: Cut your time to launch with instant data insights.</div>
+                    </div>
+                    <a href="/waitlist" class="action-button">Start Turning Insights Into Action</a>
+                </div>
+
+                <div class="content-block" id="block2">
+                    <div class="animated-text">Create Articles, Posts, and Videos Effortlessly.</div>
+                    <p class="content-paragraph">DATAI transforms your ideas into impactful blog posts, social media content, and videos. We streamline your entire content creation process.</p>
+                    <div class="feature-list">
+                        <div class="feature-item">Text to Video: Convert your ideas into polished videos ready for any platform.</div>
+                        <div class="feature-item">Text to Social Media Post: Create perfectly crafted content for every platform.</div>
+                        <div class="feature-item">Text to Blog Posts: Transform concepts into detailed, structured articles.</div>
+                    </div>
+                    <a href="/waitlist" class="action-button">Turn Ideas Into Impact</a>
+                </div>
+
+                <div class="content-block" id="block3">
+                    <div class="animated-text">Meet ELITH: Your Always-On Community Manager</div>
+                    <p class="content-paragraph">Imagine never missing a question or comment. Your always-on community manager engages with your audience 24/7.</p>
+                    <div class="feature-list">
+                        <div class="feature-item">Authentic Conversations: Manage community engagement naturally and effectively.</div>
+                        <div class="feature-item">Always On: Keep your platforms active 24/7.</div>
+                        <div class="feature-item">On-Brand Responses: Deliver consistent, professional replies.</div>
+                    </div>
+                    <a href="/waitlist" class="action-button">Let Your Community Thrive</a>
+                </div>
+
+                <div class="content-block" id="block4">
+                    <div class="animated-text">Your Vision. Your Success.</div>
+                    <p class="content-paragraph">From your first idea to the final result, DATAI helps you create campaigns that truly work. Forget the guesswork—welcome to marketing made accessible.</p>
+                    <a href="/waitlist" class="action-button">Join the Revolution</a>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-instructions">Use mouse wheel to navigate the scene!</div>
+    </div>
+
+    <script>
+        const text1 = document.getElementById('text1');
+        const contentBlocks = document.querySelectorAll('.content-block');
+        const scrollInstructions = document.querySelector('.scroll-instructions');
+        const splineViewer = document.querySelector('spline-viewer');
+        
+        let currentStep = 0;
+        const totalSteps = 3000;
+        const scrollSensitivity = 0.5;
+
+        function updateVisibility(progress) {
+            if (progress <= 0.2) {
+                text1.classList.add('text-visible');
+                contentBlocks.forEach(block => block.classList.remove('content-visible'));
+            } else if (progress > 0.2 && progress <= 0.4) {
+                text1.classList.remove('text-visible');
+                contentBlocks[0].classList.add('content-visible');
+                contentBlocks[1].classList.remove('content-visible');
+                contentBlocks[2].classList.remove('content-visible');
+                contentBlocks[3].classList.remove('content-visible');
+            } else if (progress > 0.4 && progress <= 0.6) {
+                contentBlocks[0].classList.remove('content-visible');
+                contentBlocks[1].classList.add('content-visible');
+                contentBlocks[2].classList.remove('content-visible');
+                contentBlocks[3].classList.remove('content-visible');
+            } else if (progress > 0.6 && progress <= 0.8) {
+                contentBlocks[0].classList.remove('content-visible');
+                contentBlocks[1].classList.remove('content-visible');
+                contentBlocks[2].classList.add('content-visible');
+                contentBlocks[3].classList.remove('content-visible');
+            } else if (progress > 0.8) {
+                contentBlocks[0].classList.remove('content-visible');
+                contentBlocks[1].classList.remove('content-visible');
+                contentBlocks[2].classList.remove('content-visible');
+                contentBlocks[3].classList.add('content-visible');
+            }
+
+            if (progress > 0.1) {
+                scrollInstructions.classList.add('fade-out');
+            }
+        }
+
+        function handleScroll(deltaY) {
+            currentStep += deltaY * scrollSensitivity;
+            currentStep = Math.min(Math.max(currentStep, 0), totalSteps);
+            
+            const progress = currentStep / totalSteps;
+
+            if (splineViewer.isLoaded) {
+                splineViewer.setTime(currentStep);
+            }
+
+            updateVisibility(progress);
+        }
+
+        window.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            handleScroll(e.deltaY);
+        }, { passive: false });
+
+        let touchStartY = 0;
+        
+        window.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchStartY - touchY;
+            handleScroll(deltaY * 2);
+            touchStartY = touchY;
+        }, { passive: false });
+
+        updateVisibility(0);
+    </script>
+</body>
+</html>
